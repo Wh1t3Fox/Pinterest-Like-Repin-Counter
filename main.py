@@ -33,10 +33,10 @@ if __name__ == '__main__':
     username = args.username
     url = "http://www.pinterest.com/{}/".format(username)
     ignore = ['boards', 'pins', 'likes', 'followers', 'following']
-    
+
     repins = Value('i', 0)
-    likes = Value('i' 0)
-    
+    likes = Value('i', 0)
+
     try:
         r = requests.get(url)
         soup = bs(r.text)
