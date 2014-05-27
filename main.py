@@ -3,7 +3,7 @@
 import time
 import argparse
 import requests
-import threading
+from multiprocessing import Process
 from bs4 import BeautifulSoup as bs
 
 repins = 0
@@ -46,9 +46,9 @@ if __name__ == '__main__':
             suffix = links.get('href')
             if username in suffix and suffix[11:-1] not in ignore:
                 link = 'http://www.pinterest.com' + suffix
-                t = threading.Thread(target=thread_handler, args=[link])
-                t.start()
-                t.join()
+                p = Process(target=thread_handler, args=(link,))
+                p.start()
+                p.join()
 
         time.sleep(2)
         print("Likes: {}".format(likes))
