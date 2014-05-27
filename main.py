@@ -3,15 +3,11 @@
 import time
 import argparse
 import requests
-from multiprocessing import Process
+from multiprocessing import Process, Value
 from bs4 import BeautifulSoup as bs
 
-repins = 0
-likes = 0
 
-def thread_handler(link):
-    global repins
-    global likes
+def thread_handler(link, repins, likes):
 
     r = requests.get(link)
     soup = bs(r.text)
@@ -21,11 +17,11 @@ def thread_handler(link):
 
     if like_em:
         for entry in like_em:
-            likes += int(entry.get_text().strip())
+            likes.value += int(entry.get_text().strip())
 
     if repin_em:
         for entry in repin_em:
-            repins += int(entry.get_text().strip())
+            repins.value += int(entry.get_text().strip())
 
 
 if __name__ == '__main__':
@@ -37,7 +33,10 @@ if __name__ == '__main__':
     username = args.username
     url = "http://www.pinterest.com/{}/".format(username)
     ignore = ['boards', 'pins', 'likes', 'followers', 'following']
-
+    
+    repins = Value('i', 0)
+    likes = Value('i' 0)
+    
     try:
         r = requests.get(url)
         soup = bs(r.text)
@@ -46,13 +45,13 @@ if __name__ == '__main__':
             suffix = links.get('href')
             if username in suffix and suffix[11:-1] not in ignore:
                 link = 'http://www.pinterest.com' + suffix
-                p = Process(target=thread_handler, args=(link,))
+                p = Process(target=thread_handler, args=(link,repins, likes))
                 p.start()
                 p.join()
 
         time.sleep(2)
-        print("Likes: {}".format(likes))
-        print("Repins: {}".format(repins))
+        print("Likes: {}".format(likes.value))
+        print("Repins: {}".format(repins.value))
 
     except Exception as e:
         print(str(e))
