@@ -11,7 +11,7 @@ Usage
 python main.py -u <username>
 ```
 
-Also available at: https://secure.westcraig.com/pinterest-counter
+Run the online version at: https://secure.westcraig.com/pinterest-counter
 
 License
 ----
